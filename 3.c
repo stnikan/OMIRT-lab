@@ -111,7 +111,8 @@ int main(void)
                 while(!PORTEbits.RE13);
                 j+=1;
                 j = j%10000;
-                LCDInit();
+                //LCDInit(); //работает но скучно
+                LCDSend(LCD_ADRESS, 0b00000001,COMMAND); 
                 s = 1;
                 d = j;
                 while (j/s>=10){s*=10;}
