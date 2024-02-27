@@ -1,2 +1,2 @@
 # OMIRT-lab2
-kof for 3
+kot for 3
