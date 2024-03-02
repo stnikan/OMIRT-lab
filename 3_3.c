@@ -124,6 +124,17 @@ uint16_t read_Adc(uint8_t channel){
  return result;
 }
 
+void print_num(uint16_t num){ //очищает дисплей, затем выводит заданное число
+    LCDSend(LCD_ADRESS, 0b00000001,COMMAND); 
+    uint16_t s = 1;
+    while (num/s>=10){s*=10;}
+    while (s>0){
+        LCDPritStr(My_numbers[num/s], 1);
+        num%=s;
+        s=s/10;
+        }
+}
+
 int main(void)
 {   
     TRISEbits.TRISE12=0;
@@ -134,23 +145,21 @@ int main(void)
     LCDInit();
     
     Adc_init();
-    uint16_t d = 0;
-    uint16_t s = 1;
+    uint8_t f = 0;
     uint16_t r = 1;
     while(1)
     {
+        if(!PORTEbits.RE13)
+        {
+            __delay_ms(10);
+            if(!PORTEbits.RE13)
+            {f = (f+1)%2;}   
+        }
+        r = read_Adc(f);
+        
     
-    
-    r = 40000/(100+read_Adc(2));    
-    for (uint16_t j = 0; j<r/10; j++){        
-        __delay_ms(10);
-        r = 40000/(10+read_Adc(2));
-    } 
-    LATEbits.LATE12=!LATEbits.LATE12; 
-
+   
     }
-    
-
 
     return 0;
 }
