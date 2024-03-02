@@ -124,8 +124,19 @@ uint16_t read_Adc(uint8_t channel){
  return result;
 }
 
-void print_num(uint16_t num){ //очищает дисплей, затем выводит заданное число
-    LCDSend(LCD_ADRESS, 0b00000001,COMMAND); 
+void print_num(uint16_t num, uint9_t my_adr=0){ 
+    //LCDSend(LCD_ADRESS, 0b00000001,COMMAND);
+    if (my_adr) //установка в начало для номера датчика
+    {
+        LCDSend(LCD_ADRESS, 0x88, COMMAND);
+        LCDPritStr(" ", 1);
+        LCDSend(LCD_ADRESS, 0x8, COMMAND);    
+    }
+    else  //установка во втроую строку
+    {   
+        LCDSend(LCD_ADRESS, 0xc0, COMMAND);
+        LCDPritStr("      ", 6);
+        LCDSend(LCD_ADRESS, 0xc0, COMMAND);}
     uint16_t s = 1;
     while (num/s>=10){s*=10;}
     while (s>0){
@@ -133,6 +144,7 @@ void print_num(uint16_t num){ //очищает дисплей, затем выв
         num%=s;
         s=s/10;
         }
+    
 }
 
 int main(void)
@@ -147,18 +159,20 @@ int main(void)
     Adc_init();
     uint8_t f = 0;
     uint16_t r = 1;
+    LCDPritStr("IR sens", 7);
     while(1)
     {
         if(!PORTEbits.RE13)
         {
             __delay_ms(10);
             if(!PORTEbits.RE13)
-            {f = (f+1)%2;}   
+            {
+                f = (f+1)%2;
+                print_num(f+1, 1)
+            }   
         }
         r = read_Adc(f);
-        
-    
-   
+        print_num(r)
     }
 
     return 0;
