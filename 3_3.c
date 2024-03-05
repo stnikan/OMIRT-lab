@@ -124,34 +124,35 @@ uint16_t read_Adc(uint8_t channel){
  return result;
 }
 
-void print_num(uint16_t num, uint9_t my_adr=0){ 
+void print_num(uint16_t num, uint8_t my_adr){ 
     //LCDSend(LCD_ADRESS, 0b00000001,COMMAND);
+    const char *My_numbers[10] = {"0", "1", "2","3","4","5","6","7","8","9"};
     if (my_adr) //установка в начало для номера датчика
     {
         LCDSend(LCD_ADRESS, 0x88, COMMAND);
         LCDPritStr(" ", 1);
-        LCDSend(LCD_ADRESS, 0x8, COMMAND);    
+        LCDSend(LCD_ADRESS, 0x88, COMMAND);
+        LCDPritStr(My_numbers[num], 1);
     }
     else  //установка во втроую строку
     {   
         LCDSend(LCD_ADRESS, 0xc0, COMMAND);
         LCDPritStr("      ", 6);
-        LCDSend(LCD_ADRESS, 0xc0, COMMAND);}
-    uint16_t s = 1;
-    while (num/s>=10){s*=10;}
-    while (s>0){
+        LCDSend(LCD_ADRESS, 0xc0, COMMAND);
+        uint16_t s = 1;
+        while (num/s>=10){s*=10;}
+        while (s>0){
         LCDPritStr(My_numbers[num/s], 1);
         num%=s;
         s=s/10;
-        }
+        }}
     
 }
 
 int main(void)
 {   
-    TRISEbits.TRISE12=0;
-    
-    const char *My_numbers[10] = {"0", "1", "2","3","4","5","6","7","8","9"};
+    TRISEbits.TRISE13=1; // настройка E13 как цифрового входа
+    CNPUEbits.CNPUE13=1;
     initI2C();
     I2CWrite(LCD_ADRESS, 0x00);
     LCDInit();
@@ -159,20 +160,28 @@ int main(void)
     Adc_init();
     uint8_t f = 0;
     uint16_t r = 1;
+
+    LCDSend(LCD_ADRESS, LCD_CLEAR, COMMAND);
     LCDPritStr("IR sens", 7);
+    print_num(f+1, 1);
     while(1)
     {
         if(!PORTEbits.RE13)
         {
-            __delay_ms(10);
+            __delay_ms(10)
             if(!PORTEbits.RE13)
             {
+                
                 f = (f+1)%2;
-                print_num(f+1, 1)
-            }   
+                print_num(f+1, 1);
+                while(!PORTEbits.RE13);
+                
+            }
+        
         }
         r = read_Adc(f);
-        print_num(r)
+        print_num(r, 0);
+        __delay_ms(50)
     }
 
     return 0;
