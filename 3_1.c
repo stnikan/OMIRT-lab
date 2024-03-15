@@ -8,6 +8,7 @@
 #define BACKLIGHT (1 << 3)
 #define RET_STRING 0b10000000
 #define LCD_CLEAR 0b00000001
+const char *My_asci[1] = {"0"};
 
 #define LCD_ADRESS 0x4E // или 0x7E
 
@@ -128,7 +129,7 @@ int main(void)
 {   
     TRISEbits.TRISE12=0;
     
-    const char *My_numbers[10] = {"0", "1", "2","3","4","5","6","7","8","9"};
+    //const char *My_numbers[10] = {"0", "1", "2","3","4","5","6","7","8","9"};
     initI2C();
     I2CWrite(LCD_ADRESS, 0x00);
     LCDInit();
@@ -146,21 +147,10 @@ int main(void)
     LCDSend(LCD_ADRESS, LCD_CLEAR,COMMAND);
     while (r/s>=10){s*=10;}
     while (s>0){
-        LCDPritStr(My_numbers[d/s], 1);
+        //LCDPritStr(My_numbers[d/s], 1);
+        LCDPritStr(d/s + My_asci[0], 1);
         d=d%s;
         s=s/10;}
     }
-    
-    /*r = 40000/(100+read_Adc(2));    
-    for (uint16_t j = 0; j<r/10; j++){        
-        __delay_ms(10);
-        r = 40000/(10+read_Adc(2));
-    } 
-    LATEbits.LATE12=!LATEbits.LATE12; 
-
-    }*/
-    
-
-
     return 0;
 }

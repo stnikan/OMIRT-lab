@@ -127,12 +127,13 @@ uint16_t read_Adc(uint8_t channel){
 void print_num(uint16_t num, uint8_t my_adr){ 
     //LCDSend(LCD_ADRESS, 0b00000001,COMMAND);
     //const char *My_numbers[10] = {"0", "1", "2","3","4","5","6","7","8","9"};
+    const char *My_asci[1] = {"0"};
     if (my_adr) //установка в начало для номера датчика
     {
         LCDSend(LCD_ADRESS, 0x88, COMMAND);
         LCDPritStr(" ", 1);
         LCDSend(LCD_ADRESS, 0x88, COMMAND);
-        LCDPritStr('0' + num, 1);
+        LCDPritStr(num + My_asci[0], 1);
     }
     else  //установка во втроую строку
     {   
@@ -142,7 +143,7 @@ void print_num(uint16_t num, uint8_t my_adr){
         uint16_t s = 1;
         while (num/s>=10){s*=10;}
         while (s>0){
-        LCDPritStr('0' + num/s, 1);
+        LCDPritStr(num/s+My_asci[0], 1);
         num%=s;
         s=s/10;
         }}
