@@ -129,7 +129,7 @@ int main(void)
 {   
     TRISEbits.TRISE12=0;
     
-    //const char *My_numbers[10] = {"0", "1", "2","3","4","5","6","7","8","9"};
+    const char *My_numbers[10] = {"0", "1", "2","3","4","5","6","7","8","9"};
     initI2C();
     I2CWrite(LCD_ADRESS, 0x00);
     LCDInit();
@@ -147,8 +147,8 @@ int main(void)
     LCDSend(LCD_ADRESS, LCD_CLEAR,COMMAND);
     while (r/s>=10){s*=10;}
     while (s>0){
-        //LCDPritStr(My_numbers[d/s], 1);
-        LCDPritStr(d/s + My_asci[0], 1);
+        LCDPritStr(My_numbers[d/s], 1);
+        //LCDPritStr(d/s + My_asci[0], 1);
         d=d%s;
         s=s/10;}
     }
